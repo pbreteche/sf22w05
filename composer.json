@@ -1,6 +1,8 @@
 {
+    "name": "pbreteche/sf22w05",
+    "description": "Training project",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
