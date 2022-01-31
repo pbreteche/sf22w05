@@ -6,11 +6,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route(methods={"GET", "HEAD"}, defaults={"_format": "json"})
+ */
 class DefaultController extends AbstractController
 {
 
     /**
-     * @Route("/", methods={"GET", "HEAD"})
+     * @Route("/")
      */
     public function index(): Response
     {
