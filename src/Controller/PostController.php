@@ -34,14 +34,8 @@ class PostController extends AbstractController
     /**
      * @Route("/{id}", methods="GET", requirements={"id": "\d+"})
      */
-    public function show($id, PostRepository $repository): Response
+    public function show(Post $post): Response
     {
-        $post = $repository->find($id);
-
-        if (!$post) {
-            throw $this->createNotFoundException('No post found with id '.$id);
-        }
-
         $normalizedPost = [
             'id' => $post->getId(),
             'title' => $post->getTitle(),
