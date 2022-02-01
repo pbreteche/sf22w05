@@ -25,7 +25,7 @@ class PostController extends AbstractController
         $posts = $repository->findAll();
 
         return $this->json($posts, Response::HTTP_OK, [], [
-            AbstractNormalizer::IGNORED_ATTRIBUTES => ['body'],
+            AbstractNormalizer::GROUPS => ['main'],
         ]);
     }
 
@@ -34,7 +34,9 @@ class PostController extends AbstractController
      */
     public function show(Post $post): Response
     {
-        return $this->json($post);
+        return $this->json($post, Response::HTTP_OK, [], [
+            AbstractNormalizer::GROUPS => ['main', 'detail'],
+        ]);
     }
 
     /**
