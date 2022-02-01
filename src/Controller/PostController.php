@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Normalizer\ConstraintViolationNormalizer;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,6 +46,7 @@ class PostController extends AbstractController
      */
     public function new(
         Request $request,
+        ConstraintViolationNormalizer $constraintViolationNormalizer,
         EntityManagerInterface $manager,
         SerializerInterface $serializer,
         ValidatorInterface $validator
@@ -55,15 +57,10 @@ class PostController extends AbstractController
         $errors = $validator->validate($post);
 
         if ($errors->count() > 0) {
-            $content = [];
-            foreach ($errors as $error) {
-                $content[] = [
-                    'path' => $error->getPropertyPath(),
-                    'message' => $error->getMessage(),
-                ];
-            }
-
-            return $this->json($content, Response::HTTP_PRECONDITION_FAILED);
+            return $this->json(
+                $constraintViolationNormalizer->normalize($errors),
+                Response::HTTP_PRECONDITION_FAILED
+            );
         }
 
         $manager->persist($post);
@@ -80,6 +77,7 @@ class PostController extends AbstractController
     public function update(
         Post $post,
         Request $request,
+        ConstraintViolationNormalizer $constraintViolationNormalizer,
         EntityManagerInterface $manager,
         SerializerInterface $serializer,
         ValidatorInterface $validator
@@ -92,15 +90,10 @@ class PostController extends AbstractController
         $errors = $validator->validate($post);
 
         if ($errors->count() > 0) {
-            $content = [];
-            foreach ($errors as $error) {
-                $content[] = [
-                    'path' => $error->getPropertyPath(),
-                    'message' => $error->getMessage(),
-                ];
-            }
-
-            return $this->json($content, Response::HTTP_PRECONDITION_FAILED);
+            return $this->json(
+                $constraintViolationNormalizer->normalize($errors),
+                Response::HTTP_PRECONDITION_FAILED
+            );
         }
 
         $manager->flush($post);
