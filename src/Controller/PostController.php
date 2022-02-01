@@ -66,9 +66,7 @@ class PostController extends AbstractController
         $manager->persist($post);
         $manager->flush($post);
 
-        $content = ['location' => $this->generateUrl('app_post_show', ['id' => $post->getId()])];
-
-        return $this->json($content, Response::HTTP_CREATED);
+        return $this->redirectTo($post->getId(), Response::HTTP_CREATED);
     }
 
     /**
@@ -98,8 +96,13 @@ class PostController extends AbstractController
 
         $manager->flush($post);
 
-        $content = ['location' => $this->generateUrl('app_post_show', ['id' => $post->getId()])];
+        return $this->redirectTo($post->getId());
+    }
 
-        return $this->json($content);
+    private function redirectTo(int $id, $status = Response::HTTP_OK): Response
+    {
+        $content = ['location' => $this->generateUrl('app_post_show', ['id' => $id])];
+
+        return $this->json($content, $status);
     }
 }
