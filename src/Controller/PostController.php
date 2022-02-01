@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/post")
@@ -51,7 +52,11 @@ class PostController extends AbstractController
     /**
      * @Route("/", methods="POST")
      */
-    public function new(Request $request, EntityManagerInterface $manager): Response
+    public function new(
+        Request $request,
+        EntityManagerInterface $manager,
+        ValidatorInterface $validator
+    ): Response
     {
         $data = json_decode($request->getContent(), true);
 
@@ -60,6 +65,20 @@ class PostController extends AbstractController
             ->setBody($data['body'])
             ->setCreatedAt(new \DateTimeImmutable())
         ;
+
+        $errors = $validator->validate($post);
+
+        if ($errors->count() > 0) {
+            $content = [];
+            foreach ($errors as $error) {
+                $content[] = [
+                    'path' => $error->getPropertyPath(),
+                    'message' => $error->getMessage(),
+                ];
+            }
+
+            return $this->json($content, Response::HTTP_PRECONDITION_FAILED);
+        }
 
         $manager->persist($post);
         $manager->flush();
