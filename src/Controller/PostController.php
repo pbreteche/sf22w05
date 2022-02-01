@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -23,15 +24,9 @@ class PostController extends AbstractController
     {
         $posts = $repository->findAll();
 
-        $normalizedPosts = array_map(function (Post $post) {
-            return [
-                'id' => $post->getId(),
-                'title' => $post->getTitle(),
-                'created_at' => $post->getCreatedAt()->format('c'),
-            ];
-        }, $posts);
-
-        return $this->json($normalizedPosts);
+        return $this->json($posts, Response::HTTP_OK, [], [
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['body'],
+        ]);
     }
 
     /**
