@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -15,7 +16,7 @@ class PostController extends AbstractController
     /**
      * @Route("/", methods="GET")
      */
-    public function index(PostRepository $repository)
+    public function index(PostRepository $repository): Response
     {
         $posts = $repository->findAll();
 
@@ -23,10 +24,27 @@ class PostController extends AbstractController
             return [
                 'id' => $post->getId(),
                 'title' => $post->getTitle(),
-                'created_at' => $post->getCreatedAt()->format('c')
+                'created_at' => $post->getCreatedAt()->format('c'),
             ];
         }, $posts);
 
         return $this->json($normalizedPosts);
+    }
+
+    /**
+     * @Route("/{id}", methods="GET", requirements={"id": "\d+"})
+     */
+    public function show($id, PostRepository $repository): Response
+    {
+        $post = $repository->find($id);
+
+        $normalizedPost = [
+            'id' => $post->getId(),
+            'title' => $post->getTitle(),
+            'created_at' => $post->getCreatedAt()->format('c'),
+            'body' => $post->getBody(),
+        ];
+
+        return $this->json($normalizedPost);
     }
 }
