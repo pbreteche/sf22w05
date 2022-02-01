@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -45,15 +46,11 @@ class PostController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $manager,
+        SerializerInterface $serializer,
         ValidatorInterface $validator
     ): Response {
-        $data = json_decode($request->getContent(), true);
-
-        $post = (new Post())
-            ->setTitle($data['title'])
-            ->setBody($data['body'])
-            ->setCreatedAt(new \DateTimeImmutable())
-        ;
+        $post = $serializer->deserialize($request->getContent(), Post::class, 'json');
+        $post->setCreatedAt(new \DateTimeImmutable());
 
         $errors = $validator->validate($post);
 
@@ -84,14 +81,13 @@ class PostController extends AbstractController
         Post $post,
         Request $request,
         EntityManagerInterface $manager,
+        SerializerInterface $serializer,
         ValidatorInterface $validator
     ): Response {
-        $data = json_decode($request->getContent(), true);
-
-        $post
-            ->setTitle($data['title'])
-            ->setBody($data['body'])
-        ;
+        $serializer->deserialize($request->getContent(), Post::class, 'json', [
+            AbstractNormalizer::OBJECT_TO_POPULATE => $post,
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['createdAt'],
+        ]);
 
         $errors = $validator->validate($post);
 
