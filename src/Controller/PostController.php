@@ -38,6 +38,10 @@ class PostController extends AbstractController
     {
         $post = $repository->find($id);
 
+        if (!$post) {
+            throw $this->createNotFoundException('No post found with id '.$id);
+        }
+
         $normalizedPost = [
             'id' => $post->getId(),
             'title' => $post->getTitle(),
