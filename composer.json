@@ -20,7 +20,7 @@
         "symfony/framework-bundle": "5.4.*",
         "symfony/proxy-manager-bridge": "5.4.*",
         "symfony/runtime": "5.4.*",
-        "symfony/yaml": "5.4.*",
+        "symfony/yaml": "5.4.*"
     },
     "require-dev": {
         "symfony/debug-bundle": "5.4.*",
