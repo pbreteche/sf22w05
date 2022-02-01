@@ -39,14 +39,7 @@ class PostController extends AbstractController
      */
     public function show(Post $post): Response
     {
-        $normalizedPost = [
-            'id' => $post->getId(),
-            'title' => $post->getTitle(),
-            'created_at' => $post->getCreatedAt()->format('c'),
-            'body' => $post->getBody(),
-        ];
-
-        return $this->json($normalizedPost);
+        return $this->json($post);
     }
 
     /**
