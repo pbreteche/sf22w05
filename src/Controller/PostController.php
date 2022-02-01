@@ -56,8 +56,7 @@ class PostController extends AbstractController
         Request $request,
         EntityManagerInterface $manager,
         ValidatorInterface $validator
-    ): Response
-    {
+    ): Response {
         $data = json_decode($request->getContent(), true);
 
         $post = (new Post())
@@ -81,10 +80,47 @@ class PostController extends AbstractController
         }
 
         $manager->persist($post);
-        $manager->flush();
+        $manager->flush($post);
 
         $content = ['location' => $this->generateUrl('app_post_show', ['id' => $post->getId()])];
 
         return $this->json($content, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route("/{id}", methods="PUT", requirements={"id": "\d+"})
+     */
+    public function update(
+        Post $post,
+        Request $request,
+        EntityManagerInterface $manager,
+        ValidatorInterface $validator
+    ): Response {
+        $data = json_decode($request->getContent(), true);
+
+        $post
+            ->setTitle($data['title'])
+            ->setBody($data['body'])
+        ;
+
+        $errors = $validator->validate($post);
+
+        if ($errors->count() > 0) {
+            $content = [];
+            foreach ($errors as $error) {
+                $content[] = [
+                    'path' => $error->getPropertyPath(),
+                    'message' => $error->getMessage(),
+                ];
+            }
+
+            return $this->json($content, Response::HTTP_PRECONDITION_FAILED);
+        }
+
+        $manager->flush($post);
+
+        $content = ['location' => $this->generateUrl('app_post_show', ['id' => $post->getId()])];
+
+        return $this->json($content);
     }
 }
