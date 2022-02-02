@@ -74,6 +74,18 @@ class PostController extends AbstractController
     }
 
     /**
+     * @Route("/search-category-name/{keyword}", methods="GET")
+     */
+    public function searchByCategoryName(string $keyword, PostRepository $repository): Response
+    {
+        $posts = $repository->findByCategoryName($keyword);
+
+        return $this->json($posts, Response::HTTP_OK, [], [
+            AbstractNormalizer::GROUPS => ['main'],
+        ]);
+    }
+
+    /**
      * @Route("/{id}", methods="GET", requirements={"id": "\d+"})
      */
     public function show(Post $post): Response
