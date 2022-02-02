@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -19,12 +20,28 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class PostController extends AbstractController
 {
+    private const PAGE_LENGTH = 3;
+
     /**
      * @Route("/", methods="GET")
      */
-    public function index(PostRepository $repository): Response
-    {
-        $posts = $repository->findAll();
+    public function index(
+        Request $request,
+        ConstraintViolationNormalizer $constraintViolationNormalizer,
+        PostRepository $repository,
+        ValidatorInterface $validator
+    ): Response {
+        $pageNumber = $request->query->get('page', 1);
+        $errors = $validator->validate($pageNumber, new Assert\Positive());
+
+        if ($errors->count() > 0) {
+            return $this->json(
+                $constraintViolationNormalizer->normalize($errors),
+                Response::HTTP_PRECONDITION_FAILED
+            );
+        }
+
+        $posts = $repository->findBy([], ['createdAt' => 'DESC'], self::PAGE_LENGTH, ($pageNumber - 1) * self::PAGE_LENGTH);
 
         return $this->json($posts, Response::HTTP_OK, [], [
             AbstractNormalizer::GROUPS => ['main'],
