@@ -43,6 +43,7 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class)
+     * @Groups({"main"})
      *
      * Si besoin, personnalisation de la colonne de jointure:
      * ORM\JoinColumn(name="category_id", nullable=false)
