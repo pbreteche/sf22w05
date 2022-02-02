@@ -19,6 +19,25 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
+    /**
+     * @return Post[]
+     */
+    public function findByMonth(\DateTimeImmutable $month)
+    {
+        return $this
+            ->createQueryBuilder('post')
+            ->andWhere('post.createdAt >= :from')
+            ->andWhere('post.createdAt < :to')
+            ->addOrderBy('post.createdAt', 'DESC')
+            ->getQuery()
+            ->setParameters([
+                'from' => $month->modify('first day of this month midnight'),
+                'to' => $month->modify('first day of next month midnight')
+            ])
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Post[] Returns an array of Post objects
     //  */

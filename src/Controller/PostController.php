@@ -49,6 +49,18 @@ class PostController extends AbstractController
     }
 
     /**
+     * @Route("/{month}", methods="GET", requirements={"month": "\d{4}-\d{2}"}))
+     */
+    public function indexByMonth(\DateTimeImmutable $month, PostRepository $repository): Response
+    {
+        $posts = $repository->findByMonth($month);
+
+        return $this->json($posts, Response::HTTP_OK, [], [
+            AbstractNormalizer::GROUPS => ['main'],
+        ]);
+    }
+
+    /**
      * @Route("/{id}", methods="GET", requirements={"id": "\d+"})
      */
     public function show(Post $post): Response
