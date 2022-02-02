@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Post;
 use App\Normalizer\ConstraintViolationNormalizer;
 use App\Repository\PostRepository;
@@ -54,6 +55,18 @@ class PostController extends AbstractController
     public function indexByMonth(\DateTimeImmutable $month, PostRepository $repository): Response
     {
         $posts = $repository->findByMonth($month);
+
+        return $this->json($posts, Response::HTTP_OK, [], [
+            AbstractNormalizer::GROUPS => ['main'],
+        ]);
+    }
+
+    /**
+     * @Route("/by-category/{id}", methods="GET", requirements={"id": "\d+"})
+     */
+    public function indexByCategory(Category $category, PostRepository $repository): Response
+    {
+        $posts = $repository->findBy(['classedBy' => $category]);
 
         return $this->json($posts, Response::HTTP_OK, [], [
             AbstractNormalizer::GROUPS => ['main'],
