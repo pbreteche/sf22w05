@@ -32,7 +32,25 @@ class PostRepository extends ServiceEntityRepository
             ->getQuery()
             ->setParameters([
                 'from' => $month->modify('first day of this month midnight'),
-                'to' => $month->modify('first day of next month midnight')
+                'to' => $month->modify('first day of next month midnight'),
+            ])
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return Post[]
+     */
+    public function findByMonthDQLVersion(\DateTimeImmutable $month)
+    {
+        return $this->getEntityManager()->createQuery(
+            'SELECT post FROM '.Post::class.' post WHERE 1 '.
+            'AND post.createdAt >= :from '.
+            'AND post.createdAt < :to '
+        )
+            ->setParameters([
+                'from' => $month->modify('first day of this month midnight'),
+                'to' => $month->modify('first day of next month midnight'),
             ])
             ->getResult()
         ;
