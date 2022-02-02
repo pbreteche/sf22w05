@@ -90,6 +90,11 @@ class PostController extends AbstractController
      */
     public function show(Post $post): Response
     {
+        // Exemple d'appel à une autre méthode de contrôleur
+        $jsonRelatedPosts = $this->forward(self::class.'::indexByCategory', [
+            'id' => $post->getClassedBy()->getId(),
+        ]);
+
         return $this->json($post, Response::HTTP_OK, [], [
             AbstractNormalizer::GROUPS => ['main', 'detail'],
         ]);
