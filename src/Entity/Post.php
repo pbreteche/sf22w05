@@ -41,6 +41,14 @@ class Post
      */
     private $createdAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class)
+     *
+     * Si besoin, personnalisation de la colonne de jointure:
+     * ORM\JoinColumn(name="category_id", nullable=false)
+     */
+    private $classedBy;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -78,6 +86,18 @@ class Post
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getClassedBy(): ?Category
+    {
+        return $this->classedBy;
+    }
+
+    public function setClassedBy(?Category $classedBy): self
+    {
+        $this->classedBy = $classedBy;
 
         return $this;
     }
