@@ -44,7 +44,7 @@ class Post
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts", fetch="EAGER")
      * @Groups({"main"})
      *
      * Si besoin, personnalisation de la colonne de jointure:
@@ -54,6 +54,7 @@ class Post
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class)
+     * @Groups({"main"})
      *
      * Si besoin, personnalisation de la table de jointure :
      * ORM\JoinTable(name="post_tag")

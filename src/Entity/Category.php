@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -24,6 +25,11 @@ class Category
      */
     private $name;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="classedBy")
+     */
+    private $posts;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -39,5 +45,13 @@ class Category
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @return Post[]|Collection
+     */
+    public function getPosts()
+    {
+        return $this->posts;
     }
 }
