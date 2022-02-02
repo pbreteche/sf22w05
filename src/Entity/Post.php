@@ -42,7 +42,7 @@ class Post
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class)
+     * @ORM\ManyToOne(targetEntity=Category::class, fetch="EAGER")
      * @Groups({"main"})
      *
      * Si besoin, personnalisation de la colonne de jointure:
