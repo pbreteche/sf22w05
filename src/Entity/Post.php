@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -49,6 +51,19 @@ class Post
      * ORM\JoinColumn(name="category_id", nullable=false)
      */
     private $classedBy;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Tag::class)
+     *
+     * Si besoin, personnalisation de la table de jointure :
+     * ORM\JoinTable(name="post_tag")
+     */
+    private $taggedBy;
+
+    public function __construct()
+    {
+        $this->taggedBy = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -99,6 +114,30 @@ class Post
     public function setClassedBy(?Category $classedBy): self
     {
         $this->classedBy = $classedBy;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTaggedBy(): Collection
+    {
+        return $this->taggedBy;
+    }
+
+    public function addTaggedBy(Tag $taggedBy): self
+    {
+        if (!$this->taggedBy->contains($taggedBy)) {
+            $this->taggedBy[] = $taggedBy;
+        }
+
+        return $this;
+    }
+
+    public function removeTaggedBy(Tag $taggedBy): self
+    {
+        $this->taggedBy->removeElement($taggedBy);
 
         return $this;
     }
